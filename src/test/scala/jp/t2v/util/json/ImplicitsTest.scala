@@ -50,6 +50,16 @@ class ImplicitsTest {
     val expected = """[{"aaa": [1, 2], "bbb": [3]}, {"ccc": [4, 5, 6], "ddd": []}]"""
     assertEquals(expected, actual)
   }
+  
+  @Test
+  def タプル2のIterable {
+    val actual = Iterable(
+        ("aaa", 10),
+        ("bbb", 20)
+      ).toJson
+    val expected = """[["aaa", 10], ["bbb", 20]]"""
+    assertEquals(expected, actual)
+  }
 
   @Test 
   def option {
@@ -163,7 +173,7 @@ class ImplicitsTest {
   def parsePointedInt {
     val actual = parseJson[Int]("10.03")
     assertTrue(actual.isLeft)
-    println(actual)
+//    println(actual)
   }
 
 }

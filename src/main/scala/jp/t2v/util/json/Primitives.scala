@@ -19,24 +19,21 @@ private[json] trait Primitives {
   implicit val bigIntToJson = ToJson[BigInt](_.toString)
   implicit val bigDecimalToJson = ToJson[BigDecimal](_.toString)
 
+  implicit def traversableToJson[A](implicit t: ToJson[A]) = new ToJson[Traversable[A]] {
+    def apply(value: Traversable[A]): String = value.map(_.toJson).mkString("[", ", ", "]")
+  }
+
+  implicit def mapToJson[A, B](implicit t1: ToJson[A], t2: ToJson[B]) = new ToJson[Traversable[(A, B)]] {
+    def apply(value: Traversable[(A, B)]): String = value match {
+      case m: Map[A, B] => m.map {case (k, v) => k.toString.toJson + ": " + v.toJson}.mkString("{", ", ", "}")
+      case _ => value.map {case (k, v) => "[" + k.toJson + ", " + v.toJson + "]"}.mkString("[", ", ", "]")
+    }
+  }
+
   implicit def arrayToJson[A](implicit t: ToJson[A]) = new ToJson[Array[A]] {
     def apply(value: Array[A]): String = value.map(_.toJson).mkString("[", ", ", "]")
   }
 
-  implicit def seqToJson[A](implicit t: ToJson[A]) = new ToJson[Seq[A]] {
-    def apply(value: Seq[A]): String = value.map(_.toJson).mkString("[", ", ", "]")
-  }
-
-  implicit def setToJson[A](implicit t: ToJson[A]) = new ToJson[Set[A]] {
-    def apply(value: Set[A]): String = value.map(_.toJson).mkString("[", ", ", "]")
-  }
-
-  implicit def mapToJson[A, B](implicit t: ToJson[B]) = new ToJson[Map[A, B]] {
-    def apply(value: Map[A, B]): String = value.map {
-      case (k, v) => k.toString.toJson + ": " + v.toJson
-    }.mkString("{", ", ", "}")
-  }
-  
   implicit def optionToJson[A](implicit t: ToJson[A]) = ToJson[Option[A]] {
     case None => "null"
     case Some(v) => v.toJson

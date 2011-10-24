@@ -15,7 +15,7 @@ private[json] trait Protocol {
   import scala.util.parsing.combinator.JavaTokenParsers
   import scala.util.control.Exception.allCatch
   
-  private[json] sealed abstract class JsonValue
+  sealed abstract class JsonValue
   case class PrimitiveValue(value: String) extends JsonValue
   case object NoneValue extends JsonValue
   case class ArrayValue(value: Seq[JsonValue]) extends JsonValue
