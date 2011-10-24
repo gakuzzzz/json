@@ -109,7 +109,12 @@ class ImplicitsTest {
         Parson("Jon Smith", 30, Address(4000, "Japan")),
         Parson("Jon Smith", 30, Address(4000, "Japan")),
         Parson("Jon Smith", 30, Address(4000, "Japan"))).toJson
-    val expected = """{"name": "Jon Smith", "age": 30, "address": {"zip": 4000, "country": "Japan"}}"""
+    val expected = 
+      """|[
+         |{"name": "Jon Smith", "age": 30, "address": {"zip": 4000, "country": "Japan"}}, 
+         |{"name": "Jon Smith", "age": 30, "address": {"zip": 4000, "country": "Japan"}}, 
+         |{"name": "Jon Smith", "age": 30, "address": {"zip": 4000, "country": "Japan"}}
+         |]""".stripMargin.replaceAllLiterally("\r\n", "")
     assertEquals(expected, actual)
   }
 
