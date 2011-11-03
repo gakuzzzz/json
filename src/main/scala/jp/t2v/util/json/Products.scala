@@ -14,7 +14,7 @@ private[json] trait Products {
     }
   }
 
-  implicit def product2ToJson[T1, T2](implicit t1: ToJson[T1], t2: ToJson[T2]) =
+  implicit def product2ToJson[T1, T2](implicit t1: ToJson[T1], t2: ToJson[T2]): ToJson[Product2[T1, T2]] =
     new ToJson[Product2[T1, T2]] {
       def apply(value: Product2[T1, T2]): String = value match {
         case v if v.productPrefix == "Tuple2" =>

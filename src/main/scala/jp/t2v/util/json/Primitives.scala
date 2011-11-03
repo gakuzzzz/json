@@ -25,7 +25,7 @@ private[json] trait Primitives {
 
   implicit def mapToJson[A, B](implicit t1: ToJson[A], t2: ToJson[B]) = new ToJson[Traversable[(A, B)]] {
     def apply(value: Traversable[(A, B)]): String = value match {
-      case m: Map[A, B] => m.map {case (k, v) => k.toString.toJson + ": " + v.toJson}.mkString("{", ", ", "}")
+      case m: Map[_, _] => m.map {case (k, v) => k.toString.toJson + ": " + v.toJson(t2)}.mkString("{", ", ", "}")
       case _ => value.map {case (k, v) => "[" + k.toJson + ", " + v.toJson + "]"}.mkString("[", ", ", "]")
     }
   }

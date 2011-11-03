@@ -4,7 +4,8 @@
 
 カジュアルかつ型安全に Scalaオブジェクト <--> JSON文字列 の変換したい。
 
-* JSON化
+JSON化:
+
     scala> import jp.t2v.util.json._
     import jp.t2v.util.json._
     
@@ -13,6 +14,8 @@
     
     scala> List(List("aa", "bb"), List(), List("dd", "ee", "ff")).toJson
     res1: String = [["aa", "bb"], [], ["dd", "ee", "ff"]]
+
+:
 
     scala> case class User(id: Int, name: String)
     defined class User
@@ -29,7 +32,8 @@
                     {"user": {"id": 2, "name": "John"}, "body": "World", "lang": "en"}, 
                     {"user": {"id": 3, "name": "Bob"},  "body": "Scala", "lang": "en"}]
 
-* parse
+Parse:
+
     scala> val source = """[["aa", "bb"], [], ["dd", "ee", "ff"]]"""
     res0: String = [["aa", "bb"], [], ["dd", "ee", "ff"]]
 
@@ -45,10 +49,10 @@
     res1: Either[ParseFailure, List[List[Int]]] = 
             Left(ParseFailure(could not parse "aa" to Int, ...))
 
+
 # 現状できること
 
 # 現状できないこと
 
 
 
-    

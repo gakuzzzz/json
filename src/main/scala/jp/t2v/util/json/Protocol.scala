@@ -10,6 +10,8 @@ private[json] trait Protocol {
     def toJson(implicit t: ToJson[A]): String = t(value)
   }
 
+  def serializeJson[A](value: A)(implicit t: ToJson[A]): String = t(value)
+
   case class ParseFailure(source: String, targetType: String, reason: String = "", subReasons: Map[String, ParseFailure] = Map())
 
   import scala.util.parsing.combinator.JavaTokenParsers
@@ -29,8 +31,8 @@ private[json] trait Protocol {
     def unescapeSingleQuote(in: String): String = 
       in.substring(1, in.length() - 1).replaceAllLiterally("""\'""", """'""").replaceAllLiterally("""\\""", """\""") // "
       
-    def doubleQuoted: Parser[String] = """"([^"\\]|\\\\|\\")*?"""".r ^^ unescapeDoubleQuote
-    def singleQuoted: Parser[String] = """'([^'\\]|\\\\|\\')*?'""".r ^^ unescapeSingleQuote
+    def doubleQuoted: Parser[String] = """"([^"\\]|\\\\|\\")*"""".r ^^ unescapeDoubleQuote
+    def singleQuoted: Parser[String] = """'([^'\\]|\\\\|\\')*'""".r ^^ unescapeSingleQuote
     
     def string: Parser[PrimitiveValue] = (doubleQuoted | singleQuoted) ^^ PrimitiveValue
     def boolean: Parser[PrimitiveValue] = ("true" | "false") ^^ PrimitiveValue
@@ -46,11 +48,11 @@ private[json] trait Protocol {
   }
   
   trait FromJson[+A] {
-    def apply[B >: A](json: JsonValue)(implicit m: ClassManifest[B]): Either[ParseFailure, B] =
+    def apply[B >: A](json: JsonValue): Either[ParseFailure, B] =
       try {
         parser(json)
       } catch {
-        case cause => Left(ParseFailure("", m.erasure.getName, cause.getMessage))
+        case cause => Left(ParseFailure("", "", cause.getMessage))
       }
 
     def parser: PartialFunction[JsonValue, Either[ParseFailure, A]]
@@ -77,11 +79,11 @@ private[json] trait Protocol {
     def apply(value: Map[String, JsonValue]): Either[ParseFailure, A]
   }
   
-  def parseJson[A](json: String)(implicit f: FromJson[A], m: ClassManifest[A]): Either[ParseFailure, A] = {
+  def parseJson[A](json: String)(implicit f: FromJson[A]): Either[ParseFailure, A] = {
     val parser = new JsonParser {}
     val result = parser.parseAll(parser.value, json)
     if (result.successful) f(result.get)
-    else Left(ParseFailure(json, m.erasure.getName))
+    else Left(ParseFailure(json, ""))
   }
   
   private[json] def FromPrimitiveValue[A](f: String => A) = new FromPrimitiveValue[A] {
@@ -92,10 +94,17 @@ private[json] trait Protocol {
 
   implicit val intFromJson = FromPrimitiveValue[Int] (_.toInt)
 
-  implicit def optionFromJson[A](implicit f: FromJson[A], m: ClassManifest[A]) = new FromJson[Option[A]] {
+  implicit def optionFromJson[A](implicit f: FromJson[A]) = new FromJson[Option[A]] {
     def parser = {
       case NoneValue => Right(None)
       case v => f(v).right.map(a => Some(a))
+    }
+  }
+  
+  implicit def arrayFromJson[A](implicit f: FromJson[A], m: ClassManifest[A]) = new FromArrayValue[Array[A]] {
+    def apply(value: Seq[JsonValue]) = {
+      Left(null)
+//      Right(value.map(v => f(v).right.get).toArray)
     }
   }
 

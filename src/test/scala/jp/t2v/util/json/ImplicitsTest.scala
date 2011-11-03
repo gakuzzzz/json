@@ -124,7 +124,7 @@ class ImplicitsTest {
          |{"name": "Jon Smith", "age": 30, "address": {"zip": 4000, "country": "Japan"}}, 
          |{"name": "Jon Smith", "age": 30, "address": {"zip": 4000, "country": "Japan"}}, 
          |{"name": "Jon Smith", "age": 30, "address": {"zip": 4000, "country": "Japan"}}
-         |]""".stripMargin.replaceAllLiterally("\r\n", "")
+         |]""".stripMargin.replaceAll("[\r\n]", "")
     assertEquals(expected, actual)
   }
 
@@ -138,7 +138,7 @@ class ImplicitsTest {
   @Test
   def parseEscapedString {
     val actual = parseJson[String](""""ho\"ge"""")
-    val expected = Right("""ho"ge""")
+    val expected = Right("""ho"ge""") // "
     assertEquals(expected, actual)
   }
 
@@ -151,7 +151,7 @@ class ImplicitsTest {
   
   @Test
   def parseEscapedString3 {
-    val actual = parseJson[String](""""ho\\"ge"""")
+    val actual = parseJson[String](""""ho\\"ge"""") // "
     assertTrue(actual.isLeft)
   }
 
@@ -175,5 +175,32 @@ class ImplicitsTest {
     assertTrue(actual.isLeft)
 //    println(actual)
   }
+  
+  @Test
+  def parseOption {
+    val actual = parseJson[Option[String]](""""hoge"""")
+    val expected = Right(Some("hoge"))
+    assertEquals(expected, actual)
+  }
 
+  @Test
+  def parseOptionInt {
+    val actual = parseJson[Option[Int]]("10")
+    val expected = Right(Some(10))
+    assertEquals(expected, actual)
+  }
+
+  @Test
+  def parseOptionNull {
+    val actual = parseJson[Option[String]]("""null""")
+    val expected = Right(None)
+    assertEquals(expected, actual)
+  }
+
+  @Test
+  def parseOptionUndefined {
+    val actual = parseJson[Option[String]]("""undefined""")
+    val expected = Right(None)
+    assertEquals(expected, actual)
+  }
 }
