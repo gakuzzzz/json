@@ -1,10 +1,10 @@
 # t2v-json
 
-# ‚â‚è‚½‚¢‚±‚Æ
+# ã‚„ã‚ŠãŸã„ã“ã¨
 
-ƒJƒWƒ…ƒAƒ‹‚©‚ÂŒ^ˆÀ‘S‚É ScalaƒIƒuƒWƒFƒNƒg <--> JSON•¶š—ñ ‚Ì•ÏŠ·‚µ‚½‚¢B
+ã‚«ã‚¸ãƒ¥ã‚¢ãƒ«ã‹ã¤å‹å®‰å…¨ã« Scalaã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ <--> JSONæ–‡å­—åˆ— ã®å¤‰æ›ã—ãŸã„ã€‚
 
-* JSON‰»
+* JSONåŒ–
     scala> import jp.t2v.util.json._
     import jp.t2v.util.json._
     
@@ -45,9 +45,9 @@
     res1: Either[ParseFailure, List[List[Int]]] = 
             Left(ParseFailure(could not parse "aa" to Int, ...))
 
-# Œ»ó‚Å‚«‚é‚±‚Æ
+# ç¾çŠ¶ã§ãã‚‹ã“ã¨
 
-# Œ»ó‚Å‚«‚È‚¢‚±‚Æ
+# ç¾çŠ¶ã§ããªã„ã“ã¨
 
 
 
